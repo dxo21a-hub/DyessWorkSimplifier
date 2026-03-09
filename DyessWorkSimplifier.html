@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Work Shift Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #12192e;
+            --bg-card: #1a2238;
+            --text-primary: #e8eef7;
+            --text-secondary: #9ca8c1;
+            --accent: #00d4ff;
+            --accent-hover: #00b8e6;
+            --success: #00ff88;
+            --warning: #ffd700;
+            --danger: #ff4757;
+            --border: rgba(0, 212, 255, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 12px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .header {
+            text-align: center;
+            padding: 16px 0 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .section {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .day-badge {
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .day-truck { background: rgba(0, 212, 255, 0.15); color: var(--accent); }
+        .day-overwrite { background: rgba(0, 255, 136, 0.15); color: var(--success); }
+        .day-off { background: rgba(156, 168, 193, 0.15); color: var(--text-secondary); }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .input-label {
+            font-weight: 600;
+            min-width: 60px;
+            font-size: 0.9rem;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .tally-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tally-row:last-child {
+            border-bottom: none;
+        }
+
+        .tally-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .tally-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tally-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: none;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tally-btn:active {
+            transform: scale(0.95);
+            background: var(--accent);
+        }
+
+        .tally-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:active {
+            background: var(--accent-hover);
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--bg-primary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .water-grid {
+            display: grid;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .water-item {
+            background: var(--bg-secondary);
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .water-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .water-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .water-count {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .water-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .water-btn:active {
+            transform: scale(0.95);
+            background: var(--accent);
+        }
+
+        .total-display {
+            background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(0,255,136,0.1));
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .total-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .total-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .break-timer {
+            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,71,87,0.15));
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+
+        .break-timer-label {
+            font-size: 0.85rem;
+            color: var(--warning);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .break-timer-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--warning);
+            font-family: monospace;
+        }
+
+        .clock-display {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .clock-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .clock-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: monospace;
+        }
+
+        .output-box {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-top: 12px;
+        }
+
+        .output-text {
+            color: var(--text-primary);
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .pay-stats {
+            display: grid;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .time-input {
+            flex: 1;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>💧 Work Shift Tracker</h1>
+        <p>Your complete work companion</p>
+    </div>
+
+    <!-- DAY STATUS -->
+    <div class="section">
+        <div class="day-badge" id="dayBadge">Loading...</div>
+    </div>
+
+    <!-- BREAK COUNTDOWN TIMER -->
+    <div class="section" id="breakTimerSection">
+        <div class="break-timer">
+            <div class="break-timer-label" id="breakLabel">⏰ Time Until Break</div>
+            <div class="break-timer-value" id="breakTimer">--:--:--</div>
+        </div>
+    </div>
+
+    <!-- WATER INVENTORY -->
+    <div class="section">
+        <div class="section-title">💧 Water Inventory</div>
+        
+        <div class="input-group">
+            <input type="text" class="input-field" id="newWaterInput" placeholder="Add new water type...">
+            <button class="btn btn-primary" onclick="addWater()" style="width: auto; padding: 10px 16px;">➕</button>
+        </div>
+
+        <div class="water-grid" id="waterGrid"></div>
+
+        <div class="total-display">
+            <div class="total-label">Total Units Stocked</div>
+            <div class="total-value" id="waterTotal">0</div>
+        </div>
+
+        <button class="btn btn-danger" onclick="resetWaterCounts()" style="margin-top: 12px;">🔄 Reset All Counts</button>
+    </div>
+
+    <!-- WORK LOG GENERATOR -->
+    <div class="section">
+        <div class="section-title">📋 Work Log Generator</div>
+
+        <div class="input-group">
+            <div class="input-label">Aisle #:</div>
+            <input type="number" class="input-field" id="aisleInput" value="6">
+        </div>
+
+        <!-- TRUCK DAY TALLIES -->
+        <div id="truckTallies" class="hidden">
+            <div class="tally-row">
+                <div class="tally-label">Cases</div>
+                <div class="tally-controls">
+                    <button class="tally-btn" onclick="adjustTally('cases', -1)">−</button>
+                    <div class="tally-value" id="tallyC">0</div>
+                    <button class="tally-btn" onclick="adjustTally('cases', 1)">+</button>
+                </div>
+            </div>
+            <div class="tally-row">
+                <div class="tally-label">Didn't Go Up</div>
+                <div class="tally-controls">
+                    <button class="tally-btn" onclick="adjustTally('didntGo', -1)">−</button>
+                    <div class="tally-value" id="tallyD">0</div>
+                    <button class="tally-btn" onclick="adjustTally('didntGo', 1)">+</button>
+                </div>
+            </div>
+            <div class="tally-row">
+                <div class="tally-label">Display to Shelf</div>
+                <div class="tally-controls">
+                    <button class="tally-btn" onclick="adjustTally('display', -1)">−</button>
+                    <div class="tally-value" id="tallyDis">0</div>
+                    <button class="tally-btn" onclick="adjustTally('display', 1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- OVERWRITE DAY TALLIES -->
+        <div id="overwriteTallies" class="hidden">
+            <div class="tally-row">
+                <div class="tally-label">O/w</div>
+                <div class="tally-controls">
+                    <button class="tally-btn" onclick="adjustTally('ow', -1)">−</button>
+                    <div class="tally-value" id="tallyOw">0</div>
+                    <button class="tally-btn" onclick="adjustTally('ow', 1)">+</button>
+                </div>
+            </div>
+            <div class="tally-row">
+                <div class="tally-label">B/s</div>
+                <div class="tally-controls">
+                    <button class="tally-btn" onclick="adjustTally('bs', -1)">−</button>
+                    <div class="tally-value" id="tallyBs">0</div>
+                    <button class="tally-btn" onclick="adjustTally('bs', 1)">+</button>
+                </div>
+            </div>
+            <div class="tally-row">
+                <div class="tally-label">Bstock to Display</div>
+                <div class="tally-controls">
+                    <button class="tally-btn" onclick="adjustTally('bstockDisplay', -1)">−</button>
+                    <div class="tally-value" id="tallyBD">0</div>
+                    <button class="tally-btn" onclick="adjustTally('bstockDisplay', 1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="generateLog()" style="margin-top: 14px;">📝 Generate Copy-Paste Message</button>
+
+        <div class="output-box hidden" id="logOutput">
+            <pre class="output-text" id="logText"></pre>
+            <button class="btn btn-success" onclick="copyLog()" style="margin-top: 10px;">📋 Copy to Clipboard</button>
+        </div>
+    </div>
+
+    <!-- PAY PERIOD TRACKER -->
+    <div class="section">
+        <div class="section-title">💰 Pay & Hours Tracker</div>
+
+        <div class="input-group">
+            <div class="input-label">Clock In:</div>
+            <input type="time" class="time-input" id="clockInTime">
+        </div>
+
+        <div class="input-group">
+            <div class="input-label">Clock Out:</div>
+            <input type="time" class="time-input" id="clockOutTime">
+        </div>
+
+        <button class="btn btn-primary" onclick="logShift()" style="margin-top: 12px;">⏰ Log Today's Shift</button>
+
+        <div class="pay-stats">
+            <div class="stat-card">
+                <div class="stat-label">Hours This Pay Period</div>
+                <div class="stat-value" id="hoursThisPeriod">0.0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Estimated Take-Home Pay</div>
+                <div class="stat-value" id="estimatedPay">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Current Pay Period</div>
+                <div class="stat-value" id="payPeriodDates" style="font-size: 1rem;">--</div>
+            </div>
+        </div>
+
+        <button class="btn btn-secondary" onclick="clearPayPeriod()" style="margin-top: 12px;">🗑️ Clear This Period</button>
+    </div>
+
+    <!-- CLOCK -->
+    <div class="section">
+        <div class="clock-display">
+            <div class="clock-label">Military Time</div>
+            <div class="clock-value" id="militaryClock">--:--:--</div>
+        </div>
+    </div>
+
+    <script>
+        // =============================
+        // DATA PERSISTENCE
+        // =============================
+
+        const STORAGE_KEY = 'workShiftTracker';
+
+        let appState = {
+            water: [
+                { id: 'w1', name: 'Pure Life 24 Pack', count: 0 },
+                { id: 'w2', name: 'Ozarka 24 Pack', count: 0 },
+                { id: 'w3', name: 'Big Ozarka Gallons', count: 0 },
+                { id: 'w4', name: 'Pure Life Distilled Gallons', count: 0 },
+                { id: 'w5', name: 'Pure Life Regular Gallons', count: 0 },
+                { id: 'w6', name: 'Freedoms Choice Spring 24 Pack', count: 0 },
+                { id: 'w7', name: 'Freedoms Choice Purified 24 Pack', count: 0 }
+            ],
+            tallies: {
+                cases: 0,
+                didntGo: 0,
+                display: 0,
+                ow: 0,
+                bs: 0,
+                bstockDisplay: 0
+            },
+            aisle: 6,
+            shifts: {}
+        };
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const loaded = JSON.parse(saved);
+                    appState = { ...appState, ...loaded };
+                } catch (e) {
+                    console.error('Error loading state', e);
+                }
+            }
+        }
+
+        // =============================
+        // DAY LOGIC
+        // =============================
+
+        function getDayInfo() {
+            const now = new Date();
+            const day = now.getDay();
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            if (day === 2 || day === 4 || day === 6) {
+                return { type: 'overwrite', name: dayNames[day], label: '📦 Overwrite Day' };
+            } else if (day === 3 || day === 5) {
+                return { type: 'truck', name: dayNames[day], label: '🚛 Backstock/Truck Day' };
+            } else {
+                return { type: 'off', name: dayNames[day], label: '😎 Off Day' };
+            }
+        }
+
+        function updateDayBadge() {
+            const dayInfo = getDayInfo();
+            const badge = document.getElementById('dayBadge');
+            badge.textContent = `${dayInfo.name} - ${dayInfo.label}`;
+
+            if (dayInfo.type === 'overwrite') {
+                badge.className = 'day-badge day-overwrite';
+            } else if (dayInfo.type === 'truck') {
+                badge.className = 'day-badge day-truck';
+            } else {
+                badge.className = 'day-badge day-off';
+            }
+
+            document.getElementById('truckTallies').classList.toggle('hidden', dayInfo.type !== 'truck');
+            document.getElementById('overwriteTallies').classList.toggle('hidden', dayInfo.type !== 'overwrite');
+            document.getElementById('breakTimerSection').classList.toggle('hidden', dayInfo.type === 'off');
+        }
+
+        // =============================
+        // BREAK COUNTDOWN TIMER
+        // =============================
+
+        function updateBreakTimer() {
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            const breakMinutes = 21 * 60; // 9:00 PM = 21:00
+            const lunchMinutes = 24 * 60; // Midnight = 24:00 (0:00)
+
+            let targetMinutes, label;
+
+            if (currentMinutes < breakMinutes) {
+                targetMinutes = breakMinutes;
+                label = '⏰ Time Until 10min Break (9PM)';
+            } else if (currentMinutes < lunchMinutes) {
+                targetMinutes = lunchMinutes;
+                label = '⏰ Time Until 30min Lunch (Midnight)';
+            } else {
+                document.getElementById('breakTimer').textContent = 'Shift Complete';
+                document.getElementById('breakLabel').textContent = '✅ Breaks Done';
+                return;
+            }
+
+            const diff = targetMinutes - currentMinutes;
+            const hours = Math.floor(diff / 60);
+            const mins = Math.floor(diff % 60);
+            const secs = 60 - now.getSeconds();
+
+            document.getElementById('breakLabel').textContent = label;
+            document.getElementById('breakTimer').textContent = 
+                `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // =============================
+        // WATER INVENTORY
+        // =============================
+
+        function renderWater() {
+            const grid = document.getElementById('waterGrid');
+            grid.innerHTML = appState.water.map(item => `
+                <div class="water-item">
+                    <div class="water-name">${item.name}</div>
+                    <div class="water-controls">
+                        <button class="water-btn" onclick="adjustWater('${item.id}', -1)">−</button>
+                        <div class="water-count">${item.count}</div>
+                        <button class="water-btn" onclick="adjustWater('${item.id}', 1)">+</button>
+                    </div>
+                </div>
+            `).join('');
+            updateWaterTotal();
+        }
+
+        function adjustWater(id, delta) {
+            const item = appState.water.find(w => w.id === id);
+            if (item) {
+                item.count = Math.max(0, item.count + delta);
+                saveState();
+                renderWater();
+            }
+        }
+
+        function addWater() {
+            const input = document.getElementById('newWaterInput');
+            const name = input.value.trim();
+            if (!name) return;
+
+            appState.water.push({
+                id: 'w' + Date.now(),
+                name: name,
+                count: 0
+            });
+
+            input.value = '';
+            saveState();
+            renderWater();
+        }
+
+        function updateWaterTotal() {
+            const total = appState.water.reduce((sum, item) => sum + item.count, 0);
+            document.getElementById('waterTotal').textContent = total;
+        }
+
+        function resetWaterCounts() {
+            if (!confirm('Reset all water counts to zero?')) return;
+            appState.water.forEach(item => item.count = 0);
+            saveState();
+            renderWater();
+        }
+
+        // =============================
+        // WORK LOG TALLIES
+        // =============================
+
+        function adjustTally(field, delta) {
+            appState.tallies[field] = Math.max(0, appState.tallies[field] + delta);
+            renderTallies();
+            saveState();
+        }
+
+        function renderTallies() {
+            document.getElementById('tallyC').textContent = appState.tallies.cases;
+            document.getElementById('tallyD').textContent = appState.tallies.didntGo;
+            document.getElementById('tallyDis').textContent = appState.tallies.display;
+            document.getElementById('tallyOw').textContent = appState.tallies.ow;
+            document.getElementById('tallyBs').textContent = appState.tallies.bs;
+            document.getElementById('tallyBD').textContent = appState.tallies.bstockDisplay;
+        }
+
+        function getCurrentTimeHHMM() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        function generateLog() {
+            const dayInfo = getDayInfo();
+            if (dayInfo.type === 'off') {
+                alert('Not a work day!');
+                return;
+            }
+
+            const aisle = document.getElementById('aisleInput').value || appState.aisle;
+            appState.aisle = aisle;
+            saveState();
+
+            let logText = '';
+            const coTime = getCurrentTimeHHMM();
+            const qaeDate = new Date();
+            const addMinutes = dayInfo.type === 'overwrite' ? 11 : 10;
+            qaeDate.setMinutes(qaeDate.getMinutes() + addMinutes);
+            const qaeTime = `${qaeDate.getHours()}:${qaeDate.getMinutes().toString().padStart(2, '0')}`;
+
+            if (dayInfo.type === 'overwrite') {
+                logText = `Aisle ${aisle}\nO/w ${appState.tallies.ow}\nB/s ${appState.tallies.bs}\nBstock to display ${appState.tallies.bstockDisplay}\nC/o ${coTime}\nQae ${qaeTime}`;
+            } else if (dayInfo.type === 'truck') {
+                logText = `Aisle ${aisle}\n${appState.tallies.cases} cases\n${appState.tallies.didntGo} didn't go up\n${appState.tallies.display} Display to Shelf\nCo: ${coTime}\nQAE: ${qaeTime}`;
+            }
+
+            document.getElementById('logText').textContent = logText;
+            document.getElementById('logOutput').classList.remove('hidden');
+        }
+
+        async function copyLog() {
+            const text = document.getElementById('logText').textContent;
+            try {
+                await navigator.clipboard.writeText(text);
+                alert('Copied to clipboard!');
+            } catch (e) {
+                alert('Clipboard copy failed. Please copy manually.');
+            }
+        }
+
+        // =============================
+        // PAY PERIOD / HOURS
+        // =============================
+
+        const HOURLY_RATE = 22.65;
+        const TAKE_HOME_MULTIPLIER = 0.78; // ~22% taken out
+
+        function getPayPeriod(date = new Date()) {
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const day = date.getDate();
+
+            let start, end;
+
+            if (day <= 15) {
+                start = new Date(year, month, 1);
+                end = new Date(year, month, 15, 23, 59, 59);
+            } else {
+                start = new Date(year, month, 16);
+                end = new Date(year, month + 1, 0, 23, 59, 59); // last day of month
+            }
+
+            return { start, end };
+        }
+
+        function formatDateShort(date) {
+            const m = date.getMonth() + 1;
+            const d = date.getDate();
+            const y = date.getFullYear();
+            return `${m}/${d}/${y}`;
+        }
+
+        function logShift() {
+            const clockIn = document.getElementById('clockInTime').value;
+            const clockOut = document.getElementById('clockOutTime').value;
+
+            if (!clockIn || !clockOut) {
+                alert('Enter both clock in and clock out times.');
+                return;
+            }
+
+            const todayKey = new Date().toISOString().split('T')[0];
+
+            const [inH, inM] = clockIn.split(':').map(Number);
+            const [outH, outM] = clockOut.split(':').map(Number);
+
+            let start = new Date();
+            start.setHours(inH, inM, 0, 0);
+            let end = new Date();
+            end.setHours(outH, outM, 0, 0);
+
+            if (end < start) {
+                end.setDate(end.getDate() + 1);
+            }
+
+            const diffMs = end - start;
+            const diffHours = diffMs / 1000 / 60 / 60;
+
+            appState.shifts[todayKey] = diffHours;
+            saveState();
+            updatePayStats();
+
+            alert(`Logged ${diffHours.toFixed(2)} hours for today.`);
+        }
+
+        function updatePayStats() {
+            const { start, end } = getPayPeriod();
+            const startKey = start.toISOString().split('T')[0];
+            const endKey = end.toISOString().split('T')[0];
+
+            let totalHours = 0;
+
+            Object.keys(appState.shifts).forEach(dateKey => {
+                if (dateKey >= startKey && dateKey <= endKey) {
+                    totalHours += appState.shifts[dateKey];
+                }
+            });
+
+            const estPay = totalHours * HOURLY_RATE * TAKE_HOME_MULTIPLIER;
+
+            document.getElementById('hoursThisPeriod').textContent = totalHours.toFixed(2);
+            document.getElementById('estimatedPay').textContent = `$${estPay.toFixed(2)}`;
+            document.getElementById('payPeriodDates').textContent = `${formatDateShort(start)} - ${formatDateShort(end)}`;
+        }
+
+        function clearPayPeriod() {
+            if (!confirm('Clear all logged shifts for this pay period?')) return;
+
+            const { start, end } = getPayPeriod();
+            const startKey = start.toISOString().split('T')[0];
+            const endKey = end.toISOString().split('T')[0];
+
+            Object.keys(appState.shifts).forEach(dateKey => {
+                if (dateKey >= startKey && dateKey <= endKey) {
+                    delete appState.shifts[dateKey];
+                }
+            });
+
+            saveState();
+            updatePayStats();
+        }
+
+        // =============================
+        // CLOCK
+        // =============================
+
+        function updateClock() {
+            const now = new Date();
+            const h = now.getHours().toString().padStart(2, '0');
+            const m = now.getMinutes().toString().padStart(2, '0');
+            const s = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('militaryClock').textContent = `${h}:${m}:${s}`;
+        }
+
+        // =============================
+        // INIT
+        // =============================
+
+        function init() {
+            loadState();
+            renderWater();
+            renderTallies();
+            updateDayBadge();
+            updatePayStats();
+            updateClock();
+            updateBreakTimer();
+
+            setInterval(updateClock, 1000);
+            setInterval(updateBreakTimer, 1000);
+        }
+
+        init();
+    </script>
+</body>
+</html>
