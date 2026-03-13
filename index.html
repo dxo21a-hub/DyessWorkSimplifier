@@ -33,9 +33,10 @@
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', system-ui, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
-            padding: 0 0 80px 0;
+            padding-bottom: 80px;
             font-size: 15px;
             line-height: 1.5;
+            overflow-x: hidden;
         }
 
         .header {
@@ -58,16 +59,35 @@
             margin-bottom: 8px;
         }
 
+        .timer-container {
+            margin-bottom: 10px;
+        }
+
         .timer {
             font-size: 48px;
             font-weight: 700;
             color: var(--accent);
             font-variant-numeric: tabular-nums;
             letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
         }
 
+        .day-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .backstock-day { background: rgba(0, 255, 136, 0.15); color: var(--success); border: 1px solid var(--success); }
+        .overwrite-day { background: rgba(255, 215, 0, 0.15); color: var(--warning); border: 1px solid var(--warning); }
+
         .container {
-            padding: 20px;
+            padding: 15px;
             max-width: 600px;
             margin: 0 auto;
         }
@@ -86,92 +106,9 @@
             font-weight: 600;
             margin-bottom: 15px;
             color: var(--accent);
-        }
-
-        .water-list {
-            display: grid;
-            gap: 10px;
-        }
-
-        .water-item {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            background: var(--bg-secondary);
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .water-name {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text-primary);
-            font-size: 16px;
-            padding: 8px;
-            border-radius: 8px;
-            transition: background 0.2s;
-        }
-
-        .water-name:focus {
-            outline: none;
-            background: rgba(0, 212, 255, 0.1);
-        }
-
-        .water-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: 2px solid var(--accent);
-            background: transparent;
-            color: var(--accent);
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            flex-shrink: 0;
-        }
-
-        .water-btn.checked {
-            background: var(--accent);
-            color: var(--bg-primary);
-            transform: scale(1.1);
-        }
-
-        .remove-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 2px solid var(--danger);
-            background: transparent;
-            color: var(--danger);
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s;
-            flex-shrink: 0;
-        }
-
-        .remove-btn:hover {
-            background: var(--danger);
-            color: white;
-        }
-
-        .add-water-btn {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: 2px dashed var(--accent);
-            background: transparent;
-            color: var(--accent);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 10px;
-        }
-
-        .add-water-btn:hover {
-            background: rgba(0, 212, 255, 0.1);
         }
 
         .stats {
@@ -193,15 +130,111 @@
             font-size: 28px;
             font-weight: 700;
             color: var(--success);
-            margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 1px;
+            margin-top: 4px;
         }
+
+        .water-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .water-group {
+            border-left: 3px solid var(--accent);
+            padding-left: 10px;
+            margin-bottom: 15px;
+        }
+
+        .group-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .water-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .water-item.checked {
+            background: rgba(0, 255, 136, 0.05);
+            border-color: rgba(0, 255, 136, 0.3);
+        }
+
+        .water-info {
+            flex: 1;
+        }
+
+        .water-name {
+            display: block;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 500;
+            width: 100%;
+            padding: 2px 0;
+        }
+
+        .water-name:focus { outline: none; border-bottom: 1px solid var(--accent); }
+
+        .water-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .check-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            background: transparent;
+            color: var(--accent);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .check-btn.checked {
+            background: var(--accent);
+            color: var(--bg-primary);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+        }
+
+        .remove-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--danger);
+            background: transparent;
+            color: var(--danger);
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .remove-btn:hover { opacity: 1; background: var(--danger); color: white; }
 
         .control-btn {
             width: 100%;
@@ -213,63 +246,90 @@
             cursor: pointer;
             transition: all 0.3s;
             margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .start-btn {
-            background: linear-gradient(135deg, var(--success), #00b86e);
-            color: var(--bg-primary);
+        .start-btn { background: linear-gradient(135deg, var(--success), #00b86e); color: var(--bg-primary); }
+        .pause-btn { background: linear-gradient(135deg, var(--warning), #e6c200); color: var(--bg-primary); }
+        .copy-btn { background: linear-gradient(135deg, var(--accent), #0099ff); color: var(--bg-primary); }
+        .reset-btn { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+
+        .control-btn:active { transform: scale(0.98); }
+
+        .add-water-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px dashed var(--accent);
+            background: transparent;
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
         }
 
-        .pause-btn {
-            background: linear-gradient(135deg, var(--warning), #e6c200);
-            color: var(--bg-primary);
-        }
+        .hidden { display: none; }
 
-        .reset-btn {
-            background: linear-gradient(135deg, var(--danger), #e63946);
-            color: white;
-        }
-
-        .control-btn:active {
-            transform: scale(0.95);
-        }
-
-        .hidden {
-            display: none;
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            color: var(--success);
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: 1px solid var(--success);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            z-index: 1000;
+            font-weight: 600;
+            transition: opacity 0.3s;
         }
     </style>
 </head>
 <body>
     <div class="header">
+        <div id="dayBadge" class="day-badge">Checking...</div>
         <h1>Work Shift Tracker</h1>
-        <div class="timer" id="timer">00:00:00</div>
+        <div class="timer-container">
+            <div class="timer" id="timer">00:00:00</div>
+        </div>
     </div>
 
     <div class="container">
-        <div class="section">
-            <div class="section-title">Controls</div>
-            <button class="control-btn start-btn" id="startBtn">Start Shift</button>
-            <button class="control-btn pause-btn hidden" id="pauseBtn">Pause</button>
-            <button class="control-btn reset-btn" id="resetBtn">Reset All</button>
-        </div>
-
         <div class="stats">
             <div class="stat-card">
-                <div class="stat-value" id="waterCount">0</div>
-                <div class="stat-label">Waters Checked</div>
+                <div class="stat-value" id="progressVal">0%</div>
+                <div class="stat-label">Completion</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="waterTotal">8</div>
-                <div class="stat-label">Total Waters</div>
+                <div class="stat-value" id="countVal">0/0</div>
+                <div class="stat-label">Waters Done</div>
             </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Water Station Checklist</div>
+            <div class="section-title">Controls</div>
+            <button class="control-btn start-btn" id="startBtn">▶ Start Shift</button>
+            <button class="control-btn pause-btn hidden" id="pauseBtn">⏸ Pause</button>
+            <button class="control-btn copy-btn" id="copyBtn">📋 Copy Completion Message</button>
+            <button class="control-btn reset-btn" id="resetBtn">↺ Reset Everything</button>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                Water Checklist
+                <button class="add-water-btn" style="width: auto; margin: 0; padding: 5px 10px;" id="addWaterBtn">+ Add</button>
+            </div>
             <div class="water-list" id="waterList"></div>
-            <button class="add-water-btn" id="addWaterBtn">+ Add Water Station</button>
         </div>
     </div>
+
+    <div id="toast" class="toast hidden">Message Copied!</div>
 
     <script>
         let startTime = null;
@@ -277,30 +337,64 @@
         let timerInterval = null;
         let isRunning = false;
 
+        const STORAGE_KEY = 'dxo_work_tracker_data';
+
         const defaultWaters = [
-            'Water 1', 'Water 2', 'Water 3', 'Water 4',
-            'Water 5', 'Water 6', 'Water 7', 'Water 8'
+            { id: 1, name: 'Main Lobby', checked: false, group: 'Zone A' },
+            { id: 2, name: 'West Wing', checked: false, group: 'Zone A' },
+            { id: 3, name: 'East Wing', checked: false, group: 'Zone B' },
+            { id: 4, name: 'Cafeteria', checked: false, group: 'Zone B' },
+            { id: 5, name: 'Break Room', checked: false, group: 'Zone C' },
+            { id: 6, name: 'Storage 1', checked: false, group: 'Zone C' },
+            { id: 7, name: 'Backstock A', checked: false, group: 'Backstock' },
+            { id: 8, name: 'Backstock B', checked: false, group: 'Backstock' }
         ];
 
-        let waters = [...defaultWaters];
-        let checkedWaters = new Set();
+        let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+            waters: [...defaultWaters],
+            startTime: null,
+            elapsedTime: 0
+        };
 
-        function updateTimer() {
-            const totalSeconds = Math.floor(elapsedTime / 1000);
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function updateDayStatus() {
+            const now = new Date();
+            const day = now.getDay(); // 0 (Sun) to 6 (Sat)
+            const badge = document.getElementById('dayBadge');
+            
+            // Example Logic: Mon/Wed/Fri = Overwrite, Tue/Thu/Sat = Backstock
+            if (day % 2 === 1) {
+                badge.textContent = 'Overwrite Day';
+                badge.className = 'day-badge overwrite-day';
+            } else {
+                badge.textContent = 'Backstock Day';
+                badge.className = 'day-badge backstock-day';
+            }
+        }
+
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
             const hours = Math.floor(totalSeconds / 3600);
             const minutes = Math.floor((totalSeconds % 3600) / 60);
             const seconds = totalSeconds % 60;
-            document.getElementById('timer').textContent = 
-                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('timer').textContent = formatTime(state.elapsedTime);
         }
 
         function startTimer() {
             if (!isRunning) {
-                startTime = Date.now() - elapsedTime;
+                startTime = Date.now() - state.elapsedTime;
                 timerInterval = setInterval(() => {
-                    elapsedTime = Date.now() - startTime;
-                    updateTimer();
-                }, 100);
+                    state.elapsedTime = Date.now() - startTime;
+                    updateTimerDisplay();
+                    saveState();
+                }, 1000);
                 isRunning = true;
                 document.getElementById('startBtn').classList.add('hidden');
                 document.getElementById('pauseBtn').classList.remove('hidden');
@@ -313,83 +407,143 @@
                 isRunning = false;
                 document.getElementById('startBtn').classList.remove('hidden');
                 document.getElementById('pauseBtn').classList.add('hidden');
+                saveState();
             }
         }
 
-        function resetTimer() {
-            clearInterval(timerInterval);
-            isRunning = false;
-            elapsedTime = 0;
-            checkedWaters.clear();
-            updateTimer();
-            updateWaterCount();
-            renderWaters();
-            document.getElementById('startBtn').classList.remove('hidden');
-            document.getElementById('pauseBtn').classList.add('hidden');
-        }
-
-        function updateWaterCount() {
-            document.getElementById('waterCount').textContent = checkedWaters.size;
-            document.getElementById('waterTotal').textContent = waters.length;
-        }
-
-        function toggleWater(index) {
-            if (checkedWaters.has(index)) {
-                checkedWaters.delete(index);
-            } else {
-                checkedWaters.add(index);
+        function resetEverything() {
+            if (confirm('Reset all progress and waters?')) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                state = {
+                    waters: defaultWaters.map(w => ({...w, checked: false})),
+                    startTime: null,
+                    elapsedTime: 0
+                };
+                saveState();
+                renderWaters();
+                updateTimerDisplay();
+                updateStats();
+                document.getElementById('startBtn').classList.remove('hidden');
+                document.getElementById('pauseBtn').classList.add('hidden');
             }
-            updateWaterCount();
-            renderWaters();
         }
 
-        function removeWater(index) {
-            waters.splice(index, 1);
-            checkedWaters.delete(index);
-            const newChecked = new Set();
-            checkedWaters.forEach(i => {
-                if (i > index) newChecked.add(i - 1);
-                else if (i < index) newChecked.add(i);
-            });
-            checkedWaters = newChecked;
-            updateWaterCount();
-            renderWaters();
+        function updateStats() {
+            const total = state.waters.length;
+            const checked = state.waters.filter(w => w.checked).length;
+            const percent = total > 0 ? Math.round((checked / total) * 100) : 0;
+            
+            document.getElementById('progressVal').textContent = `${percent}%`;
+            document.getElementById('countVal').textContent = `${checked}/${total}`;
         }
 
-        function updateWaterName(index, newName) {
-            waters[index] = newName || `Water ${index + 1}`;
+        function toggleWater(id) {
+            const water = state.waters.find(w => w.id === id);
+            if (water) {
+                water.checked = !water.checked;
+                saveState();
+                renderWaters();
+                updateStats();
+            }
+        }
+
+        function removeWater(id) {
+            state.waters = state.waters.filter(w => w.id !== id);
+            saveState();
+            renderWaters();
+            updateStats();
+        }
+
+        function updateWaterName(id, name) {
+            const water = state.waters.find(w => w.id === id);
+            if (water) {
+                water.name = name;
+                saveState();
+            }
         }
 
         function addWater() {
-            waters.push(`Water ${waters.length + 1}`);
-            updateWaterCount();
+            const newId = Date.now();
+            state.waters.push({
+                id: newId,
+                name: `New Water`,
+                checked: false,
+                group: 'Manual'
+            });
+            saveState();
             renderWaters();
+            updateStats();
+        }
+
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            toast.textContent = text;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2000);
+        }
+
+        function copyMessage() {
+            const checked = state.waters.filter(w => w.checked).length;
+            const total = state.waters.length;
+            const time = formatTime(state.elapsedTime);
+            const dayType = document.getElementById('dayBadge').textContent;
+            
+            const message = `📊 Shift Update (${dayType})
+✅ Progress: ${checked}/${total} waters completed
+⏱ Total Time: ${time}
+📝 Status: ${checked === total ? 'All Finished!' : 'In Progress'}`;
+            
+            navigator.clipboard.writeText(message).then(() => {
+                showToast('Message Copied to Clipboard!');
+            });
         }
 
         function renderWaters() {
-            const waterList = document.getElementById('waterList');
-            waterList.innerHTML = waters.map((water, index) => `
-                <div class="water-item">
-                    <input type="text" class="water-name" value="${water}" 
-                           onchange="updateWaterName(${index}, this.value)"
-                           placeholder="Water name">
-                    <button class="water-btn ${checkedWaters.has(index) ? 'checked' : ''}" 
-                            onclick="toggleWater(${index})">
-                        ${checkedWaters.has(index) ? '✓' : '○'}
-                    </button>
-                    <button class="remove-btn" onclick="removeWater(${index})" title="Remove">×</button>
-                </div>
-            `).join('');
+            const list = document.getElementById('waterList');
+            list.innerHTML = '';
+            
+            // Grouping logic
+            const groups = [...new Set(state.waters.map(w => w.group))];
+            
+            groups.forEach(group => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'water-group';
+                groupDiv.innerHTML = `<div class="group-name">${group}</div>`;
+                
+                const groupWaters = state.waters.filter(w => w.group === group);
+                groupWaters.forEach(water => {
+                    const item = document.createElement('div');
+                    item.className = `water-item ${water.checked ? 'checked' : ''}`;
+                    item.innerHTML = `
+                        <div class="water-info">
+                            <input type="text" class="water-name" value="${water.name}" 
+                                   onchange="updateWaterName(${water.id}, this.value)">
+                        </div>
+                        <div class="water-controls">
+                            <button class="check-btn ${water.checked ? 'checked' : ''}" onclick="toggleWater(${water.id})">
+                                ${water.checked ? '✓' : '○'}
+                            </button>
+                            <button class="remove-btn" onclick="removeWater(${water.id})">×</button>
+                        </div>
+                    `;
+                    groupDiv.appendChild(item);
+                });
+                list.appendChild(groupDiv);
+            });
         }
 
         document.getElementById('startBtn').onclick = startTimer;
         document.getElementById('pauseBtn').onclick = pauseTimer;
-        document.getElementById('resetBtn').onclick = resetTimer;
+        document.getElementById('resetBtn').onclick = resetEverything;
+        document.getElementById('copyBtn').onclick = copyMessage;
         document.getElementById('addWaterBtn').onclick = addWater;
 
+        // Init
+        updateDayStatus();
         renderWaters();
-        updateWaterCount();
-        updateTimer();
+        updateStats();
+        updateTimerDisplay();
     </script>
 </body>
 </html>
